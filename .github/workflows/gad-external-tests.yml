@@ -1,0 +1,58 @@
+name: CI - Test External App
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  run-tests:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: ⬇️ Checkout test repository
+        uses: actions/checkout@v3
+        
+      - name: ⬇️ Clone GAD application repository via Git
+        run: |
+          git clone https://github.com/jaktestowac/gad-gui-api-demo.git app
+          cd app
+          git checkout main
+          
+      - name: 🔧 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: "npm"
+          node-version: "20"
+          registry-url: "https://npm.pkg.github.com"
+          cache-dependency-path: "**/package-lock.json"
+          
+      - name: 📦 Install dependencies for app
+        working-directory: ./app
+        run: npm i
+        
+      - name: 🚀 Start the application
+        working-directory: ./app
+        run: |
+          npm run start &
+          sleep 10  # Adjust if needed
+          
+      - name: Check GAD status
+        run: |
+          curl http://localhost:3000/api/about
+          curl http://localhost:3000/api/health
+          
+      - name: Install test dependencies
+        run: |
+          npm i
+          
+      - name: Install Playwright Browsers
+        run: |
+          npx playwright install --with-deps chromium
+          
+      - name: Run Playwright tests
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+          USER_EMAIL: ${{ secrets.USER_EMAIL }}
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+        run: |
+          npm run test
