@@ -1,0 +1,16 @@
+export const nonStandardInputs = [
+  // '',
+  'undefined',
+  'undef',
+  'null',
+  'NULL',
+  '(null)',
+  'nil',
+  'NIL',
+  'true',
+  'false',
+  'True',
+  'False',
+  'TRUE',
+  'FALSE',
+];

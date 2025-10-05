@@ -1,0 +1,13 @@
+import { MainMenuComponent } from '@_src/ui/components/main-menu.component';
+import { BasePage } from '@_src/ui/pages/base.page';
+import { Page } from '@playwright/test';
+
+export class CommentsPage extends BasePage {
+  url = '/comments.html';
+  mainMenu: MainMenuComponent;
+
+  constructor(page: Page) {
+    super(page);
+    this.mainMenu = new MainMenuComponent(this.page);
+  }
+}
